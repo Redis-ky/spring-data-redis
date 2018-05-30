@@ -49,6 +49,12 @@ public class UserDaoTest {
 	}
 	
 	@Test
+	public void addHash() {
+		// -------------- Create ---------------
+		System.out.println(userDao.addHash(new UserModel("u123456", "上海")));
+	}
+	
+	@Test
 	public void select() {
 		// ---------------Read ---------------
 		String uid = "u123456";
@@ -73,9 +79,7 @@ public class UserDaoTest {
 	public void delete() {
 		// --------------Delete ------------
 		String uid = "u123456";
-		userDao.delete(uid);
-		UserModel userModel = userDao.select(uid);
-		assertNull(userModel);
+		System.out.println(userDao.delete(uid));
 	}
 	
 	@Test

@@ -1,7 +1,9 @@
 package org.zlex.redis.dao.impl;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -59,6 +61,17 @@ public class UserRedisDaoImpl implements UserRedisDao {
 	}
 	
 	@Override
+	public boolean addHash(UserModel userModel) {
+		RedisSerializer<String> serializer = redisTemplate.getStringSerializer();
+		byte[] key  = serializer.serialize("user.uid." + userModel.getUid());
+		Map<String,Object> map = new HashMap<String, Object>();
+		map.put("uid", userModel.getUid());
+		map.put("address", userModel.getAddress());
+		redisTemplate.opsForHash().putAll(key, map);
+		return true;
+	}
+	
+	@Override
 	public boolean update(UserModel userModel) {
 		boolean result = redisTemplate.execute(new RedisCallback<Boolean>() {  
             public Boolean doInRedis(RedisConnection connection) throws DataAccessException {  
@@ -72,22 +85,6 @@ public class UserRedisDaoImpl implements UserRedisDao {
             }  
         });  
         return result;  
-	}
-
-	@Override
-	public UserModel select(final String uid) {
-		return redisTemplate.execute(new RedisCallback<UserModel>() {
-			@Override
-			public UserModel doInRedis(RedisConnection connection) throws DataAccessException {
-				byte[] key = redisTemplate.getStringSerializer().serialize("user.uid." + uid);
-				if (connection.exists(key)) {
-					byte[] value = connection.get(key);
-					String objStr = redisTemplate.getStringSerializer().deserialize(value);
-					return JsonUtils.json2Object(objStr, UserModel.class);
-				}
-				return null;
-			}
-		});
 	}
 
 	@Override
@@ -128,6 +125,22 @@ public class UserRedisDaoImpl implements UserRedisDao {
             }  
         });  
         return result; 
+	}
+	
+	@Override
+	public UserModel select(final String uid) {
+		return redisTemplate.execute(new RedisCallback<UserModel>() {
+			@Override
+			public UserModel doInRedis(RedisConnection connection) throws DataAccessException {
+				byte[] key = redisTemplate.getStringSerializer().serialize("user.uid." + uid);
+				if (connection.exists(key)) {
+					byte[] value = connection.get(key);
+					String objStr = redisTemplate.getStringSerializer().deserialize(value);
+					return JsonUtils.json2Object(objStr, UserModel.class);
+				}
+				return null;
+			}
+		});
 	}
 
 }

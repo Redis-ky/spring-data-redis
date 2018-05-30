@@ -22,6 +22,8 @@ public interface UserRedisDao {
      */  
     boolean addBatch(List<UserModel> userModelList);
     
+    boolean addHash(UserModel userModel);
+    
     /** 
      * 修改 
      * <br>------------------------------<br> 
@@ -29,14 +31,6 @@ public interface UserRedisDao {
      * @return boolean
      */  
     boolean update(UserModel userModel);
-
-    /** 
-     * 通过key获取 
-     * <br>------------------------------<br> 
-     * @param uid 
-     * @return UserModel 
-     */
-    UserModel select(String uid);
 
     /** 
      * 删除 
@@ -59,4 +53,12 @@ public interface UserRedisDao {
      * @return boolean
      */ 
     boolean check(String uid);
+    
+    /** 
+     * 通过key获取 
+     * <br>------------------------------<br> 
+     * @param uid 
+     * @return UserModel 
+     */
+    UserModel select(String uid);
 }
